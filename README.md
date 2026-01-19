@@ -1,8 +1,8 @@
-# 🛡️ PROJECT NEXUS: Parametrik Mikro Sigorta Platformu
+# 🛡️Parametrik Mikro Sigorta Platformu
 
 ## 🌍 Proje Hakkında (About)
 
-**NEXUS**, geleneksel sigortacılık süreçlerini (eksper, hasar ihbarı, uzun bekleme süreleri) ortadan kaldıran, **Blockchain** ve **Akıllı Kontrat (Smart Contract)** mantığıyla çalışan fütüristik bir **InsurTech** simülasyonudur.
+**Parametrik Mikro Sigorta Platformu**, geleneksel sigortacılık süreçlerini (eksper, hasar ihbarı, uzun bekleme süreleri) ortadan kaldıran, **Blockchain** ve **Akıllı Kontrat (Smart Contract)** mantığıyla çalışan fütüristik bir **InsurTech** simülasyonudur.
 
 Bu proje, bir "Oracle" (veri sağlayıcı) üzerinden alınan gerçek dünya verilerine (Hava durumu, Uçuş verileri) dayanarak, hasar ödemelerini otonom olarak gerçekleştiren bir **Parametrik Sigorta** platformunun ön yüz prototipidir.
 
