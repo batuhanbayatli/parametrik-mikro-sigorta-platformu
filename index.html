@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS SİGORTA TEKNOLOJİLERİ | Batuhan Bayatlı</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-green: #0aff00;
+            --neon-red: #ff003c;
+            --neon-yellow: #fcee0a;
+            --bg-dark: #050505;
+            --glass: rgba(10, 20, 30, 0.75);
+            --border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--neon-blue);
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            overflow: hidden; /* Scroll yok, full app hissi */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 3D Tarama Overlay'i (Gizli Başlar) */
+        #scan-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #scan-canvas-container {
+            width: 100%;
+            height: 70%;
+        }
+
+        .scan-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+            margin-top: 20px;
+            animation: pulse 0.5s infinite alternate;
+            text-align: center;
+        }
+
+        /* Arka Plan Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--neon-blue);
+            background: rgba(0,0,0,0.8);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            z-index: 100;
+        }
+
+        .brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .system-status {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px; height: 10px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: blink 1s infinite;
+        }
+
+        /* Ana İçerik */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+            flex-grow: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--glass);
+            border: var(--border);
+            position: relative;
+            backdrop-filter: blur(10px);
+            /* Kesik Köşe Tasarımı */
+            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.2);
+            border-color: #fff;
+            transform: scale(1.01);
+        }
+
+        .card-inner {
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            margin: 0 0 20px 0;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--neon-blue);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Senaryo Kutusu */
+        .scenario-box {
+            background: rgba(0, 243, 255, 0.05);
+            border-left: 3px solid var(--neon-blue);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: #aee;
+            line-height: 1.5;
+        }
+
+        .scenario-title {
+            color: var(--neon-yellow);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Metrikler */
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-item {
+            background: rgba(255,255,255,0.03);
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .metric-label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
+        .metric-val { font-size: 1.3rem; font-weight: 700; color: #fff; }
+        .text-red { color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red); }
+
+        /* Buton */
+        button {
+            background: rgba(0, 243, 255, 0.1);
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            width: 100%;
+        }
+
+        button:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-blue);
+        }
+
+        /* Sonuç Ekranı */
+        .result-screen {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #333;
+            background: #000;
+            font-family: 'Share Tech Mono', monospace;
+            display: none;
+            text-align: center;
+        }
+
+        /* Terminal Footer */
+        .terminal-panel {
+            background: #080808;
+            border-top: 2px solid #333;
+            height: 140px;
+            padding: 10px 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            color: #0f0;
+            overflow: hidden;
+            position: relative;
+            z-index: 100;
+        }
+
+        .terminal-header {
+            color: #666;
+            border-bottom: 1px solid #333;
+            margin-bottom: 5px;
+            padding-bottom: 2px;
+        }
+
+        #log-content { height: 90px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+        .log-line { margin: 2px 0; opacity: 0.8; }
+
+        .signature {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        .signature a { color: var(--neon-blue); text-decoration: none; border-bottom: 1px dotted var(--neon-blue); }
+
+        @keyframes pulse { from { opacity: 0.6; } to { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div id="scan-overlay">
+        <div id="scan-canvas-container"></div>
+        <div class="scan-text" id="scan-status-text">UYDU BAĞLANTISI KURULUYOR...</div>
+        <div style="color:var(--neon-green); font-family: 'Share Tech Mono'; font-size:0.8rem; margin-top:10px;">
+            VERİ PAKETLERİ ŞİFRELENİYOR [AES-256]
+        </div>
+    </div>
+
+    <header>
+        <div class="brand">NEXUS <span style="color:#fff">SİGORTA</span> AĞI</div>
+        <div class="system-status">
+            <div class="status-dot"></div>
+            SİSTEM AKTİF | NODE: İSTANBUL-34
+        </div>
+    </header>
+
+    <div class="main-grid">
+        
+        <div class="card">
+            <div class="card-inner">
+                <h2>
+                    AGRO-CHAIN (TARIM)
+                    <span style="font-size:0.8rem; opacity:0.6; padding-top:5px;">ID: #TR-AGR</span>
+                </h2>
+
+                <div class="scenario-box">
+                    <span class="scenario-title">/// SENARYO PROTOKOLÜ ///</span>
+                    Bu akıllı kontrat, KONYA ovasındaki uydu verilerini anlık izler.
+                    Yağış miktarı kritik eşiğin altına düşerse (Kuraklık), ödeme 
+                    otomatik tetiklenir.
+                    <br>
+                    <span class="logic-line">> EĞER (Yağış < 10mm) İSE ÖDE()</span>
+                </div>
+
+                <div class="metrics">
+                    <div class="metric-item">
+                        <div class="metric-label">HEDEF BÖLGE</div>
+                        <div class="metric-val">KONYA</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">TETİKLEYİCİ (EŞİK)</div>
+                        <div class="metric-val text-red">10.0 mm</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">TEMİNAT</div>
+                        <div class="metric-val">50,000 ₺</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">DURUM</div>
+                        <div class="metric-val" style="color:var(--neon-green)">AKTİF</div>
+                    </div>
+                </div>
+
+                <button onclick="startScan('agro')">UYDU TARAMASINI BAŞLAT</button>
+                <div id="result-agro" class="result-screen"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-inner">
+                <h2>
+                    AERO-BLOCK (SEYAHAT)
+                    <span style="font-size:0.8rem; opacity:0.6; padding-top:5px;">ID: #TK-1923</span>
+                </h2>
+
+                <div class="scenario-box">
+                    <span class="scenario-title">/// SENARYO PROTOKOLÜ ///</span>
+                    Bu kontrat, global hava trafiği (ATC) verilerini blokzincire yazar.
+                    Uçak 120 dakikadan fazla rötar yaparsa, tazminat cüzdana yansır.
+                    <br>
+                    <span class="logic-line">> EĞER (Gecikme > 120dk) İSE ÖDE()</span>
+                </div>
+
+                <div class="metrics">
+                    <div class="metric-item">
+                        <div class="metric-label">UÇUŞ NO</div>
+                        <div class="metric-val">TK-1923</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">TETİKLEYİCİ (SÜRE)</div>
+                        <div class="metric-val text-red">120 DK</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">TEMİNAT</div>
+                        <div class="metric-val">5,000 ₺</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">DURUM</div>
+                        <div class="metric-val" style="color:var(--neon-green)">AKTİF</div>
+                    </div>
+                </div>
+
+                <button onclick="startScan('flight')">KULE VERİSİNİ SORGULA</button>
+                <div id="result-flight" class="result-screen"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="terminal-panel">
+        <div class="terminal-header">/// SİSTEM LOGLARI /// GÜVENLİ BAĞLANTI (SSL/TLS)</div>
+        <div id="log-content"></div>
+        <div class="signature">
+            SİSTEM MİMARI: <a href="https://www.linkedin.com/in/batuhanbayatlı/" target="_blank">BATUHAN BAYATLI</a>
+        </div>
+    </div>
+
+    <script>
+        // === 1. ARKA PLAN 2D EFEKTLERİ ===
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+
+        const particles = [];
+        for(let i=0; i<40; i++) {
+            particles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5
+            });
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            bgCtx.fillStyle = '#00f3ff';
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+                bgCtx.fillRect(p.x, p.y, 2, 2);
+            });
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        // === 2. THREE.JS 3D DÜNYA KÜRESİ (GÖZ BOYAMA MODU) ===
+        let scene, camera, renderer, globe, points;
+        let animationId;
+
+        function init3D() {
+            const container = document.getElementById('scan-canvas-container');
+            container.innerHTML = ''; // Temizle
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(renderer.domElement);
+
+            // Tel Kafes Dünya (Wireframe Globe)
+            const geometry = new THREE.IcosahedronGeometry(2, 2); // Detay seviyesi
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x00f3ff, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            globe = new THREE.Mesh(geometry, material);
+            scene.add(globe);
+
+            // Etrafında dönen partiküller (Uydular gibi)
+            const pGeo = new THREE.BufferGeometry();
+            const pCount = 500;
+            const pPos = new Float32Array(pCount * 3);
+            for(let i=0; i<pCount*3; i++) {
+                pPos[i] = (Math.random() - 0.5) * 8;
+            }
+            pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+            const pMat = new THREE.PointsMaterial({ color: 0x0aff00, size: 0.05 });
+            points = new THREE.Points(pGeo, pMat);
+            scene.add(points);
+
+            camera.position.z = 5;
+
+            animate3D();
+        }
+
+        function animate3D() {
+            animationId = requestAnimationFrame(animate3D);
+            globe.rotation.y += 0.01; // Dünyayı döndür
+            globe.rotation.x += 0.002;
+            points.rotation.y -= 0.005; // Partikülleri ters yöne döndür
+            
+            // Pulse efekti (Büyüyüp küçülme)
+            const scale = 1 + Math.sin(Date.now() * 0.002) * 0.05;
+            globe.scale.set(scale, scale, scale);
+
+            renderer.render(scene, camera);
+        }
+
+        // === 3. SİSTEM LOGLARI ===
+        function addLog(text, color="#0f0") {
+            const logs = document.getElementById('log-content');
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            const time = new Date().toLocaleTimeString('tr-TR');
+            div.innerHTML = `<span style="color:#666">[${time}]</span> <span style="color:${color}">> ${text}</span>`;
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        // Başlangıç Logları
+        setTimeout(() => addLog("Oracle nodları başlatılıyor..."), 500);
+        setTimeout(() => addLog("Ethereum ana ağına bağlanıldı."), 1000);
+        setTimeout(() => addLog("Hava durumu API anahtarları doğrulandı."), 1500);
+        setTimeout(() => addLog("Sistem boşta. Komut bekleniyor...", "#fff"), 2000);
+
+        // === 4. ANA İŞLEM (BUTONA BASINCA) ===
+        function startScan(type) {
+            const overlay = document.getElementById('scan-overlay');
+            const statusText = document.getElementById('scan-status-text');
+            const resultDiv = document.getElementById(type === 'agro' ? 'result-agro' : 'result-flight');
+
+            // Overlay'i aç ve 3D'yi başlat
+            overlay.style.display = 'flex';
+            init3D();
+            
+            // Sonuç kutusunu gizle/sıfırla
+            resultDiv.style.display = 'none';
+
+            // Logları akıt
+            addLog("KULLANICI TALEBİ ALINDI. TARAMA BAŞLATILIYOR...", "#00f3ff");
+
+            let steps = [
+                "Küresel konumlama sistemi (GPS) kilitlendi...",
+                "Bölgesel veri tabanları sorgulanıyor...",
+                "Akıllı kontrat koşulları simüle ediliyor...",
+                "Blokzincir mutabakatı sağlanıyor...",
+                "SONUÇLAR İŞLENİYOR..."
+            ];
+
+            let i = 0;
+            const stepInterval = setInterval(() => {
+                if(i < steps.length) {
+                    statusText.innerText = steps[i];
+                    addLog(steps[i]);
+                    i++;
+                }
+            }, 800);
+
+            // 4.5 saniye sonra bitir
+            setTimeout(() => {
+                clearInterval(stepInterval);
+                cancelAnimationFrame(animationId); // 3D'yi durdur
+                overlay.style.display = 'none'; // Overlay'i kapat
+
+                // SONUÇ ÜRETME
+                resultDiv.style.display = 'block';
+                
+                if(type === 'agro') {
+                    // Tarım Senaryosu (%50 Şans)
+                    const rain = (Math.random() * 20).toFixed(1);
+                    if(rain < 10) {
+                        // ÖDEME VAR
+                        resultDiv.innerHTML = `
+                            <div style="color:var(--neon-green); font-size:1.2rem; font-weight:bold;">⚠️ KURAKLIK TESPİT EDİLDİ!</div>
+                            <div style="margin:10px 0; font-size:1.5rem;">YAĞIŞ: ${rain} mm</div>
+                            <div style="color:#fff;">AKILLI KONTRAT TETİKLENDİ.</div>
+                            <div style="border:1px solid var(--neon-green); padding:5px; margin-top:5px; color:var(--neon-green)">
+                                🚀 50.000 TL TRANSFER EDİLDİ
+                            </div>
+                            <div style="font-size:0.7rem; color:#666; margin-top:5px;">TX: 0x8a...3f9</div>
+                        `;
+                        addLog(`KRİTİK: Kuraklık (${rain}mm). Ödeme Yapıldı.`, "#ff003c");
+                    } else {
+                        // ÖDEME YOK
+                        resultDiv.innerHTML = `
+                            <div style="color:#888; font-size:1.2rem;">✅ VERİLER NORMAL</div>
+                            <div style="margin:10px 0; font-size:1.5rem;">YAĞIŞ: ${rain} mm</div>
+                            <div>Eşik değerinin üzerinde. İşlem yok.</div>
+                        `;
+                        addLog(`BİLGİ: Yağış normal (${rain}mm). Kontrat beklemede.`, "#fff");
+                    }
+                } else {
+                    // Uçuş Senaryosu
+                    const delay = Math.floor(Math.random() * 200);
+                    if(delay > 120) {
+                        // ÖDEME VAR
+                        resultDiv.innerHTML = `
+                            <div style="color:var(--neon-green); font-size:1.2rem; font-weight:bold;">⚠️ RÖTAR TESPİT EDİLDİ!</div>
+                            <div style="margin:10px 0; font-size:1.5rem;">GECİKME: ${delay} DK</div>
+                            <div style="color:#fff;">AKILLI KONTRAT TETİKLENDİ.</div>
+                            <div style="border:1px solid var(--neon-green); padding:5px; margin-top:5px; color:var(--neon-green)">
+                                🚀 5.000 TL TRANSFER EDİLDİ
+                            </div>
+                            <div style="font-size:0.7rem; color:#666; margin-top:5px;">TX: 0x3b...a12</div>
+                        `;
+                        addLog(`KRİTİK: Yüksek rötar (${delay}dk). Ödeme Yapıldı.`, "#ff003c");
+                    } else {
+                        // ÖDEME YOK
+                        resultDiv.innerHTML = `
+                            <div style="color:#888; font-size:1.2rem;">✅ UÇUŞ ZAMANINDA</div>
+                            <div style="margin:10px 0; font-size:1.5rem;">GECİKME: ${delay} DK</div>
+                            <div>Limit aşılmadı. İyi uçuşlar.</div>
+                        `;
+                        addLog(`BİLGİ: Rötar limiti aşılmadı (${delay}dk).`, "#fff");
+                    }
+                }
+
+            }, 4500);
+        }
+
+        // Pencere boyutu değişirse 3D canvas'ı güncelle
+        window.addEventListener('resize', () => {
+            if(camera && renderer) {
+                const container = document.getElementById('scan-canvas-container');
+                camera.aspect = container.offsetWidth / container.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+            }
+        });
+
+    </script>
+</body>
+</html>
