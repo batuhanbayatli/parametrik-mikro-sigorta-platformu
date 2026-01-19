@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS SİGORTA TEKNOLOJİLERİ | Batuhan Bayatlı</title>
+    <title>PARAMETRİK MİKRO SİGORTA PLATFORMU | Batuhan Bayatlı</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
@@ -29,7 +29,7 @@
             flex-direction: column;
         }
 
-        /* 3D Tarama Overlay'i (Gizli Başlar) */
+        
         #scan-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -56,7 +56,7 @@
             text-align: center;
         }
 
-        /* Arka Plan Canvas */
+        
         #bg-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -65,7 +65,7 @@
             opacity: 0.3;
         }
 
-        /* Header */
+        
         header {
             display: flex;
             justify-content: space-between;
@@ -102,7 +102,7 @@
             animation: blink 1s infinite;
         }
 
-        /* Ana İçerik */
+        
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -169,7 +169,7 @@
             text-transform: uppercase;
         }
 
-        /* Metrikler */
+       
         .metrics {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -187,7 +187,7 @@
         .metric-val { font-size: 1.3rem; font-weight: 700; color: #fff; }
         .text-red { color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red); }
 
-        /* Buton */
+        
         button {
             background: rgba(0, 243, 255, 0.1);
             border: 2px solid var(--neon-blue);
@@ -209,7 +209,7 @@
             box-shadow: 0 0 30px var(--neon-blue);
         }
 
-        /* Sonuç Ekranı */
+        
         .result-screen {
             margin-top: 20px;
             padding: 15px;
@@ -220,7 +220,7 @@
             text-align: center;
         }
 
-        /* Terminal Footer */
+        
         .terminal-panel {
             background: #080808;
             border-top: 2px solid #333;
@@ -370,7 +370,7 @@
     </div>
 
     <script>
-        // === 1. ARKA PLAN 2D EFEKTLERİ ===
+        
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
         bgCanvas.width = window.innerWidth;
@@ -399,7 +399,7 @@
         }
         animateBg();
 
-        // === 2. THREE.JS 3D DÜNYA KÜRESİ (GÖZ BOYAMA MODU) ===
+        
         let scene, camera, renderer, globe, points;
         let animationId;
 
@@ -413,7 +413,7 @@
             renderer.setSize(container.offsetWidth, container.offsetHeight);
             container.appendChild(renderer.domElement);
 
-            // Tel Kafes Dünya (Wireframe Globe)
+            
             const geometry = new THREE.IcosahedronGeometry(2, 2); // Detay seviyesi
             const material = new THREE.MeshBasicMaterial({ 
                 color: 0x00f3ff, 
@@ -424,7 +424,7 @@
             globe = new THREE.Mesh(geometry, material);
             scene.add(globe);
 
-            // Etrafında dönen partiküller (Uydular gibi)
+            
             const pGeo = new THREE.BufferGeometry();
             const pCount = 500;
             const pPos = new Float32Array(pCount * 3);
@@ -443,18 +443,18 @@
 
         function animate3D() {
             animationId = requestAnimationFrame(animate3D);
-            globe.rotation.y += 0.01; // Dünyayı döndür
+            globe.rotation.y += 0.01; 
             globe.rotation.x += 0.002;
-            points.rotation.y -= 0.005; // Partikülleri ters yöne döndür
+            points.rotation.y -= 0.005; 
             
-            // Pulse efekti (Büyüyüp küçülme)
+            
             const scale = 1 + Math.sin(Date.now() * 0.002) * 0.05;
             globe.scale.set(scale, scale, scale);
 
             renderer.render(scene, camera);
         }
 
-        // === 3. SİSTEM LOGLARI ===
+        
         function addLog(text, color="#0f0") {
             const logs = document.getElementById('log-content');
             const div = document.createElement('div');
@@ -465,26 +465,26 @@
             logs.scrollTop = logs.scrollHeight;
         }
 
-        // Başlangıç Logları
+        
         setTimeout(() => addLog("Oracle nodları başlatılıyor..."), 500);
         setTimeout(() => addLog("Ethereum ana ağına bağlanıldı."), 1000);
         setTimeout(() => addLog("Hava durumu API anahtarları doğrulandı."), 1500);
         setTimeout(() => addLog("Sistem boşta. Komut bekleniyor...", "#fff"), 2000);
 
-        // === 4. ANA İŞLEM (BUTONA BASINCA) ===
+        
         function startScan(type) {
             const overlay = document.getElementById('scan-overlay');
             const statusText = document.getElementById('scan-status-text');
             const resultDiv = document.getElementById(type === 'agro' ? 'result-agro' : 'result-flight');
 
-            // Overlay'i aç ve 3D'yi başlat
+            
             overlay.style.display = 'flex';
             init3D();
             
-            // Sonuç kutusunu gizle/sıfırla
+            
             resultDiv.style.display = 'none';
 
-            // Logları akıt
+            
             addLog("KULLANICI TALEBİ ALINDI. TARAMA BAŞLATILIYOR...", "#00f3ff");
 
             let steps = [
@@ -504,20 +504,20 @@
                 }
             }, 800);
 
-            // 4.5 saniye sonra bitir
+            
             setTimeout(() => {
                 clearInterval(stepInterval);
                 cancelAnimationFrame(animationId); // 3D'yi durdur
                 overlay.style.display = 'none'; // Overlay'i kapat
 
-                // SONUÇ ÜRETME
+               
                 resultDiv.style.display = 'block';
                 
                 if(type === 'agro') {
-                    // Tarım Senaryosu (%50 Şans)
+                    
                     const rain = (Math.random() * 20).toFixed(1);
                     if(rain < 10) {
-                        // ÖDEME VAR
+                        
                         resultDiv.innerHTML = `
                             <div style="color:var(--neon-green); font-size:1.2rem; font-weight:bold;">⚠️ KURAKLIK TESPİT EDİLDİ!</div>
                             <div style="margin:10px 0; font-size:1.5rem;">YAĞIŞ: ${rain} mm</div>
@@ -529,7 +529,7 @@
                         `;
                         addLog(`KRİTİK: Kuraklık (${rain}mm). Ödeme Yapıldı.`, "#ff003c");
                     } else {
-                        // ÖDEME YOK
+                        
                         resultDiv.innerHTML = `
                             <div style="color:#888; font-size:1.2rem;">✅ VERİLER NORMAL</div>
                             <div style="margin:10px 0; font-size:1.5rem;">YAĞIŞ: ${rain} mm</div>
@@ -538,10 +538,10 @@
                         addLog(`BİLGİ: Yağış normal (${rain}mm). Kontrat beklemede.`, "#fff");
                     }
                 } else {
-                    // Uçuş Senaryosu
+                    
                     const delay = Math.floor(Math.random() * 200);
                     if(delay > 120) {
-                        // ÖDEME VAR
+                        
                         resultDiv.innerHTML = `
                             <div style="color:var(--neon-green); font-size:1.2rem; font-weight:bold;">⚠️ RÖTAR TESPİT EDİLDİ!</div>
                             <div style="margin:10px 0; font-size:1.5rem;">GECİKME: ${delay} DK</div>
@@ -553,7 +553,7 @@
                         `;
                         addLog(`KRİTİK: Yüksek rötar (${delay}dk). Ödeme Yapıldı.`, "#ff003c");
                     } else {
-                        // ÖDEME YOK
+                        
                         resultDiv.innerHTML = `
                             <div style="color:#888; font-size:1.2rem;">✅ UÇUŞ ZAMANINDA</div>
                             <div style="margin:10px 0; font-size:1.5rem;">GECİKME: ${delay} DK</div>
@@ -566,7 +566,7 @@
             }, 4500);
         }
 
-        // Pencere boyutu değişirse 3D canvas'ı güncelle
+        
         window.addEventListener('resize', () => {
             if(camera && renderer) {
                 const container = document.getElementById('scan-canvas-container');
@@ -578,4 +578,5 @@
 
     </script>
 </body>
+
 </html>
