@@ -1,6 +1,6 @@
 # 🛡️Parametrik Mikro Sigorta Platformu
 
-## 🌍 Proje Hakkında (About)
+## 🌍 Proje Hakkında
 
 **Parametrik Mikro Sigorta Platformu**, geleneksel sigortacılık süreçlerini (eksper, hasar ihbarı, uzun bekleme süreleri) ortadan kaldıran, **Blockchain** ve **Akıllı Kontrat (Smart Contract)** mantığıyla çalışan fütüristik bir **InsurTech** simülasyonudur.
 
