@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PARAMETRİK MİKRO SİGORTA PLATFORMU | Batuhan Bayatlı</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
@@ -13,9 +13,13 @@
             --neon-green: #0aff00;
             --neon-red: #ff003c;
             --neon-yellow: #fcee0a;
-            --bg-dark: #050505;
-            --glass: rgba(10, 20, 30, 0.75);
+            --bg-dark: #050508;
+            --glass: rgba(10, 20, 30, 0.85);
             --border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
@@ -23,71 +27,85 @@
             color: var(--neon-blue);
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
-            overflow: hidden; /* Scroll yok, full app hissi */
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        
+        /* CRT Scanline & Vignette Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 1000;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
+
         #scan-overlay {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(3, 8, 15, 0.96);
             z-index: 2000;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(8px);
         }
 
         #scan-canvas-container {
             width: 100%;
-            height: 70%;
+            height: 60vh;
+            max-width: 800px;
         }
 
         .scan-text {
             font-family: 'Share Tech Mono', monospace;
             color: var(--neon-blue);
-            font-size: 1.5rem;
-            margin-top: 20px;
-            animation: pulse 0.5s infinite alternate;
+            font-size: 1.3rem;
+            margin-top: 15px;
+            text-shadow: 0 0 10px var(--neon-blue);
+            animation: pulse 0.6s infinite alternate;
             text-align: center;
+            padding: 0 15px;
         }
 
-        
         #bg-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            opacity: 0.3;
+            opacity: 0.35;
         }
 
-        
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
             border-bottom: 1px solid var(--neon-blue);
-            background: rgba(0,0,0,0.8);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            background: rgba(5, 10, 20, 0.9);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
             z-index: 100;
         }
 
         .brand {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
-            text-shadow: 0 0 10px var(--neon-blue);
+            text-shadow: 0 0 12px var(--neon-blue);
         }
 
         .system-status {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--neon-green);
             display: flex;
             align-items: center;
@@ -95,24 +113,22 @@
         }
 
         .status-dot {
-            width: 10px; height: 10px;
+            width: 9px; height: 9px;
             background: var(--neon-green);
             border-radius: 50%;
             box-shadow: 0 0 10px var(--neon-green);
             animation: blink 1s infinite;
         }
 
-        
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            padding: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+            padding: 30px;
             flex-grow: 1;
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
             width: 100%;
-            box-sizing: border-box;
             z-index: 10;
         }
 
@@ -120,45 +136,44 @@
             background: var(--glass);
             border: var(--border);
             position: relative;
-            backdrop-filter: blur(10px);
-            /* Kesik Köşe Tasarımı */
-            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
-            transition: all 0.3s;
+            backdrop-filter: blur(12px);
+            clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
 
         .card:hover {
-            box-shadow: 0 0 40px rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
             border-color: #fff;
-            transform: scale(1.01);
+            transform: translateY(-3px);
         }
 
         .card-inner {
-            padding: 30px;
+            padding: 25px;
             height: 100%;
             display: flex;
             flex-direction: column;
         }
 
         h2 {
-            margin: 0 0 20px 0;
-            font-size: 1.5rem;
+            margin: 0 0 15px 0;
+            font-size: 1.35rem;
             text-transform: uppercase;
             border-bottom: 2px solid var(--neon-blue);
             padding-bottom: 10px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        
         .scenario-box {
             background: rgba(0, 243, 255, 0.05);
             border-left: 3px solid var(--neon-blue);
-            padding: 15px;
+            padding: 12px 15px;
             margin-bottom: 20px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #aee;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .scenario-title {
@@ -169,93 +184,111 @@
             text-transform: uppercase;
         }
 
-       
+        .logic-line {
+            display: block;
+            margin-top: 8px;
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+
         .metrics {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .metric-item {
-            background: rgba(255,255,255,0.03);
-            padding: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .metric-label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
-        .metric-val { font-size: 1.3rem; font-weight: 700; color: #fff; }
-        .text-red { color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red); }
+        .metric-label { font-size: 0.7rem; color: #888; text-transform: uppercase; font-family: 'Share Tech Mono', monospace; }
+        .metric-val { font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 2px; }
+        .text-red { color: var(--neon-red); text-shadow: 0 0 8px var(--neon-red); }
 
-        
         button {
             background: rgba(0, 243, 255, 0.1);
             border: 2px solid var(--neon-blue);
             color: var(--neon-blue);
-            padding: 15px;
+            padding: 14px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
-            transition: 0.3s;
-            letter-spacing: 2px;
+            transition: all 0.25s;
+            letter-spacing: 1.5px;
             width: 100%;
+            margin-top: auto;
         }
 
         button:hover {
             background: var(--neon-blue);
             color: #000;
-            box-shadow: 0 0 30px var(--neon-blue);
+            box-shadow: 0 0 25px var(--neon-blue);
         }
 
-        
         .result-screen {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 14px;
             border: 1px dashed #333;
-            background: #000;
+            background: #020408;
             font-family: 'Share Tech Mono', monospace;
             display: none;
             text-align: center;
         }
 
-        
         .terminal-panel {
-            background: #080808;
-            border-top: 2px solid #333;
+            background: #04080e;
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
             height: 140px;
-            padding: 10px 20px;
+            padding: 10px 25px;
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.8rem;
-            color: #0f0;
-            overflow: hidden;
+            color: #0aff00;
             position: relative;
             z-index: 100;
         }
 
         .terminal-header {
-            color: #666;
-            border-bottom: 1px solid #333;
-            margin-bottom: 5px;
-            padding-bottom: 2px;
+            color: #557;
+            border-bottom: 1px solid #1a2536;
+            margin-bottom: 6px;
+            padding-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
         }
 
-        #log-content { height: 90px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
-        .log-line { margin: 2px 0; opacity: 0.8; }
+        #log-content {
+            height: 85px;
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .log-line { margin: 1px 0; opacity: 0.9; }
 
         .signature {
             position: absolute;
-            bottom: 10px;
-            right: 20px;
-            font-size: 0.8rem;
-            color: #555;
+            bottom: 8px;
+            right: 25px;
+            font-size: 0.75rem;
+            color: #667;
         }
         .signature a { color: var(--neon-blue); text-decoration: none; border-bottom: 1px dotted var(--neon-blue); }
 
-        @keyframes pulse { from { opacity: 0.6; } to { opacity: 1; } }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 8px; text-align: center; }
+            .main-grid { padding: 15px; gap: 20px; }
+            .brand { font-size: 1.15rem; }
+            .terminal-panel { font-size: 0.7rem; }
+        }
     </style>
 </head>
 <body>
@@ -264,9 +297,9 @@
 
     <div id="scan-overlay">
         <div id="scan-canvas-container"></div>
-        <div class="scan-text" id="scan-status-text">UYDU BAĞLANTISI KURULUYOR...</div>
-        <div style="color:var(--neon-green); font-family: 'Share Tech Mono'; font-size:0.8rem; margin-top:10px;">
-            VERİ PAKETLERİ ŞİFRELENİYOR [AES-256]
+        <div class="scan-text" id="scan-status-text">ORACLE UYDU BAĞLANTISI KURULUYOR...</div>
+        <div style="color:var(--neon-green); font-family: 'Share Tech Mono'; font-size:0.8rem; margin-top:8px;">
+            VERİ PAKETLERİ DOĞRULANIYOR [SMART-CONTRACT // SHA-256]
         </div>
     </div>
 
@@ -279,21 +312,19 @@
     </header>
 
     <div class="main-grid">
-        
+        <!-- 1. KART: TARIM SİGORTASI -->
         <div class="card">
             <div class="card-inner">
                 <h2>
                     AGRO-CHAIN (TARIM)
-                    <span style="font-size:0.8rem; opacity:0.6; padding-top:5px;">ID: #TR-AGR</span>
+                    <span style="font-size:0.8rem; opacity:0.6;">ID: #TR-AGR</span>
                 </h2>
 
                 <div class="scenario-box">
                     <span class="scenario-title">/// SENARYO PROTOKOLÜ ///</span>
-                    Bu akıllı kontrat, KONYA ovasındaki uydu verilerini anlık izler.
-                    Yağış miktarı kritik eşiğin altına düşerse (Kuraklık), ödeme 
-                    otomatik tetiklenir.
-                    <br>
-                    <span class="logic-line">> EĞER (Yağış < 10mm) İSE ÖDE()</span>
+                    Bu akıllı kontrat, KONYA ovasındaki uydu yağış verilerini anlık izler.
+                    Yağış kritik eşiğin altına düşerse (Kuraklık), hasar ödemesi otomatik gerçekleşir.
+                    <span class="logic-line">&gt; EĞER (Yağış &lt; 10.0mm) İSE ÖDE()</span>
                 </div>
 
                 <div class="metrics">
@@ -303,66 +334,68 @@
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">TETİKLEYİCİ (EŞİK)</div>
-                        <div class="metric-val text-red">10.0 mm</div>
+                        <div class="metric-val text-red">&lt; 10.0 mm</div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-label">TEMİNAT</div>
+                        <div class="metric-label">TEMİNAT BEDELİ</div>
                         <div class="metric-val">50,000 ₺</div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-label">DURUM</div>
+                        <div class="metric-label">KONTRAT DURUMU</div>
                         <div class="metric-val" style="color:var(--neon-green)">AKTİF</div>
                     </div>
                 </div>
 
-                <button onclick="startScan('agro')">UYDU TARAMASINI BAŞLAT</button>
+                <button onclick="startScan('agro')">UYDU VERİSİNİ TARA</button>
                 <div id="result-agro" class="result-screen"></div>
             </div>
         </div>
 
+        <!-- 2. KART: SEYAHAT SİGORTASI -->
         <div class="card">
             <div class="card-inner">
                 <h2>
                     AERO-BLOCK (SEYAHAT)
-                    <span style="font-size:0.8rem; opacity:0.6; padding-top:5px;">ID: #TK-1923</span>
+                    <span style="font-size:0.8rem; opacity:0.6;">ID: #TK-1923</span>
                 </h2>
 
                 <div class="scenario-box">
                     <span class="scenario-title">/// SENARYO PROTOKOLÜ ///</span>
-                    Bu kontrat, global hava trafiği (ATC) verilerini blokzincire yazar.
-                    Uçak 120 dakikadan fazla rötar yaparsa, tazminat cüzdana yansır.
-                    <br>
-                    <span class="logic-line">> EĞER (Gecikme > 120dk) İSE ÖDE()</span>
+                    Bu kontrat, global hava trafiği (ATC) radar verilerini dinler.
+                    Uçuş 120 dakikadan fazla rötar yaparsa, tazminat anında cüzdana aktarılır.
+                    <span class="logic-line">&gt; EĞER (Rötar &gt; 120dk) İSE ÖDE()</span>
                 </div>
 
                 <div class="metrics">
                     <div class="metric-item">
-                        <div class="metric-label">UÇUŞ NO</div>
+                        <div class="metric-label">UÇUŞ KODU</div>
                         <div class="metric-val">TK-1923</div>
                     </div>
                     <div class="metric-item">
                         <div class="metric-label">TETİKLEYİCİ (SÜRE)</div>
-                        <div class="metric-val text-red">120 DK</div>
+                        <div class="metric-val text-red">&gt; 120 DK</div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-label">TEMİNAT</div>
+                        <div class="metric-label">TEMİNAT BEDELİ</div>
                         <div class="metric-val">5,000 ₺</div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-label">DURUM</div>
+                        <div class="metric-label">KONTRAT DURUMU</div>
                         <div class="metric-val" style="color:var(--neon-green)">AKTİF</div>
                     </div>
                 </div>
 
-                <button onclick="startScan('flight')">KULE VERİSİNİ SORGULA</button>
+                <button onclick="startScan('flight')">KULE RADARINI SORGULA</button>
                 <div id="result-flight" class="result-screen"></div>
             </div>
         </div>
-
     </div>
 
     <div class="terminal-panel">
-        <div class="terminal-header">/// SİSTEM LOGLARI /// GÜVENLİ BAĞLANTI (SSL/TLS)</div>
+        <div class="terminal-header">
+            <span>/// ORACLE SİSTEM LOGLARI /// GÜVENLİ BAĞLANTI (TLS // ZERO-KNOWLEDGE PROOF)</span>
+            <span>BLOK YÜKSEKLİĞİ: #8,492,103</span>
+        </div>
         <div id="log-content"></div>
         <div class="signature">
             SİSTEM MİMARI: <a href="https://www.linkedin.com/in/batuhanbayatlı/" target="_blank">BATUHAN BAYATLI</a>
@@ -370,19 +403,55 @@
     </div>
 
     <script>
-        
+        // --- 1. WEB AUDIO API SES SENTEZ MOTORU ---
+        const SoundFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+            },
+            beep(freq = 440, type = 'sine', duration = 0.1, vol = 0.1) {
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
+            },
+            scanStep() { this.beep(980, 'triangle', 0.08, 0.06); },
+            success() {
+                this.beep(523.25, 'sine', 0.12, 0.1);
+                setTimeout(() => this.beep(659.25, 'sine', 0.15, 0.1), 100);
+                setTimeout(() => this.beep(1046.50, 'sine', 0.25, 0.12), 220);
+            },
+            alert() {
+                this.beep(880, 'sawtooth', 0.15, 0.15);
+                setTimeout(() => this.beep(440, 'sawtooth', 0.25, 0.15), 140);
+            }
+        };
+
+        // --- 2. CANVAS ARKA PLAN PARTİKÜLLERİ ---
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
         bgCanvas.width = window.innerWidth;
         bgCanvas.height = window.innerHeight;
 
         const particles = [];
-        for(let i=0; i<40; i++) {
+        for(let i=0; i<45; i++) {
             particles.push({
                 x: Math.random() * bgCanvas.width,
                 y: Math.random() * bgCanvas.height,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4
             });
         }
 
@@ -399,100 +468,90 @@
         }
         animateBg();
 
-        
+        // --- 3. THREE.JS 3D KÜRE VE VERİ NOKTALARI ---
         let scene, camera, renderer, globe, points;
         let animationId;
 
         function init3D() {
             const container = document.getElementById('scan-canvas-container');
-            container.innerHTML = ''; // Temizle
+            container.innerHTML = '';
 
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(65, container.offsetWidth / container.offsetHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(container.offsetWidth, container.offsetHeight);
             container.appendChild(renderer.domElement);
 
-            
-            const geometry = new THREE.IcosahedronGeometry(2, 2); // Detay seviyesi
+            const geometry = new THREE.IcosahedronGeometry(2.1, 2);
             const material = new THREE.MeshBasicMaterial({ 
                 color: 0x00f3ff, 
-                wireframe: true,
-                transparent: true,
-                opacity: 0.6
+                wireframe: true, 
+                transparent: true, 
+                opacity: 0.55
             });
             globe = new THREE.Mesh(geometry, material);
             scene.add(globe);
 
-            
             const pGeo = new THREE.BufferGeometry();
-            const pCount = 500;
+            const pCount = 450;
             const pPos = new Float32Array(pCount * 3);
             for(let i=0; i<pCount*3; i++) {
-                pPos[i] = (Math.random() - 0.5) * 8;
+                pPos[i] = (Math.random() - 0.5) * 7;
             }
             pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-            const pMat = new THREE.PointsMaterial({ color: 0x0aff00, size: 0.05 });
+            const pMat = new THREE.PointsMaterial({ color: 0x0aff00, size: 0.06 });
             points = new THREE.Points(pGeo, pMat);
             scene.add(points);
 
-            camera.position.z = 5;
-
+            camera.position.z = 4.8;
             animate3D();
         }
 
         function animate3D() {
             animationId = requestAnimationFrame(animate3D);
-            globe.rotation.y += 0.01; 
-            globe.rotation.x += 0.002;
-            points.rotation.y -= 0.005; 
-            
-            
-            const scale = 1 + Math.sin(Date.now() * 0.002) * 0.05;
+            globe.rotation.y += 0.012; 
+            globe.rotation.x += 0.003;
+            points.rotation.y -= 0.006; 
+            const scale = 1 + Math.sin(Date.now() * 0.0025) * 0.04;
             globe.scale.set(scale, scale, scale);
-
             renderer.render(scene, camera);
         }
 
-        
-        function addLog(text, color="#0f0") {
+        // --- 4. SİSTEM LOG MODÜLÜ ---
+        function addLog(text, color="#0aff00") {
             const logs = document.getElementById('log-content');
             const div = document.createElement('div');
             div.className = 'log-line';
             const time = new Date().toLocaleTimeString('tr-TR');
-            div.innerHTML = `<span style="color:#666">[${time}]</span> <span style="color:${color}">> ${text}</span>`;
+            div.innerHTML = `<span style="color:#557">[${time}]</span> <span style="color:${color}">&gt; ${text}</span>`;
             logs.appendChild(div);
             logs.scrollTop = logs.scrollHeight;
         }
 
-        
-        setTimeout(() => addLog("Oracle nodları başlatılıyor..."), 500);
-        setTimeout(() => addLog("Ethereum ana ağına bağlanıldı."), 1000);
-        setTimeout(() => addLog("Hava durumu API anahtarları doğrulandı."), 1500);
-        setTimeout(() => addLog("Sistem boşta. Komut bekleniyor...", "#fff"), 2000);
+        setTimeout(() => addLog("Chainlink Oracle nodları senkronize edildi."), 400);
+        setTimeout(() => addLog("IPFS & Ethereum akıllı kontratları doğrulandı."), 900);
+        setTimeout(() => addLog("Konya Meteoroloji Radar & Eurocontrol ATC API bağlandı."), 1400);
+        setTimeout(() => addLog("Platform hazır. Tetikleyici sorgusu bekleniyor...", "#00f3ff"), 1900);
 
-        
+        // --- 5. TARAMA & AKILLI KONTRAT TETİKLEME ---
         function startScan(type) {
+            SoundFX.beep(600, 'sine', 0.15, 0.1);
             const overlay = document.getElementById('scan-overlay');
             const statusText = document.getElementById('scan-status-text');
             const resultDiv = document.getElementById(type === 'agro' ? 'result-agro' : 'result-flight');
 
-            
             overlay.style.display = 'flex';
             init3D();
-            
-            
             resultDiv.style.display = 'none';
 
-            
-            addLog("KULLANICI TALEBİ ALINDI. TARAMA BAŞLATILIYOR...", "#00f3ff");
+            addLog(`KULLANICI TALEBİ: ${type === 'agro' ? 'KONYA RADAR SORGUSU' : 'TK-1923 ATC SORGUSU'} BAŞLATILDI...`, "#00f3ff");
 
-            let steps = [
-                "Küresel konumlama sistemi (GPS) kilitlendi...",
-                "Bölgesel veri tabanları sorgulanıyor...",
-                "Akıllı kontrat koşulları simüle ediliyor...",
-                "Blokzincir mutabakatı sağlanıyor...",
-                "SONUÇLAR İŞLENİYOR..."
+            const steps = [
+                "GPS uyduları ile şifreli kanal kuruluyor...",
+                "Bölgesel Oracle veri düğümleri doğrulanıyor...",
+                "Akıllı kontrat eşik değer parametreleri simüle ediliyor...",
+                "Zero-Knowledge mutabakatı işleniyor...",
+                "Blokzincir ağına transfer talimatı gönderiliyor..."
             ];
 
             let i = 0;
@@ -500,74 +559,70 @@
                 if(i < steps.length) {
                     statusText.innerText = steps[i];
                     addLog(steps[i]);
+                    SoundFX.scanStep();
                     i++;
                 }
-            }, 800);
+            }, 750);
 
-            
             setTimeout(() => {
                 clearInterval(stepInterval);
-                cancelAnimationFrame(animationId); // 3D'yi durdur
-                overlay.style.display = 'none'; // Overlay'i kapat
-
-               
+                cancelAnimationFrame(animationId);
+                overlay.style.display = 'none';
                 resultDiv.style.display = 'block';
-                
+
                 if(type === 'agro') {
-                    
-                    const rain = (Math.random() * 20).toFixed(1);
+                    const rain = (Math.random() * 18).toFixed(1);
                     if(rain < 10) {
-                        
+                        SoundFX.success();
                         resultDiv.innerHTML = `
-                            <div style="color:var(--neon-green); font-size:1.2rem; font-weight:bold;">⚠️ KURAKLIK TESPİT EDİLDİ!</div>
-                            <div style="margin:10px 0; font-size:1.5rem;">YAĞIŞ: ${rain} mm</div>
-                            <div style="color:#fff;">AKILLI KONTRAT TETİKLENDİ.</div>
-                            <div style="border:1px solid var(--neon-green); padding:5px; margin-top:5px; color:var(--neon-green)">
-                                🚀 50.000 TL TRANSFER EDİLDİ
+                            <div style="color:var(--neon-green); font-size:1.15rem; font-weight:bold;">⚠️ KURAKLIK TESPİT EDİLDİ!</div>
+                            <div style="margin:8px 0; font-size:1.4rem; color:#fff;">ÖLÇÜLEN YAĞIŞ: <span style="color:var(--neon-red);">${rain} mm</span></div>
+                            <div style="color:#aee; font-size:0.85rem;">AKILLI KONTRAT OTONOM TETİKLENDİ.</div>
+                            <div style="border:1px solid var(--neon-green); background: rgba(10,255,0,0.08); padding:8px; margin-top:8px; color:var(--neon-green); font-weight:bold;">
+                                🚀 50.000 TL DİJİTAL CÜZDANA AKTARILDI
                             </div>
-                            <div style="font-size:0.7rem; color:#666; margin-top:5px;">TX: 0x8a...3f9</div>
+                            <div style="font-size:0.7rem; color:#667; margin-top:6px;">TX: 0x8a92...3f9c</div>
                         `;
-                        addLog(`KRİTİK: Kuraklık (${rain}mm). Ödeme Yapıldı.`, "#ff003c");
+                        addLog(`KRİTİK: Kuraklık (${rain}mm < 10.0mm). 50.000 TL Ödeme Gerçekleştirildi.`, "#0aff00");
                     } else {
-                        
+                        SoundFX.alert();
                         resultDiv.innerHTML = `
-                            <div style="color:#888; font-size:1.2rem;">✅ VERİLER NORMAL</div>
-                            <div style="margin:10px 0; font-size:1.5rem;">YAĞIŞ: ${rain} mm</div>
-                            <div>Eşik değerinin üzerinde. İşlem yok.</div>
+                            <div style="color:#889; font-size:1.15rem; font-weight:bold;">✅ YAĞIŞ EŞİK DEĞERİNDE</div>
+                            <div style="margin:8px 0; font-size:1.4rem; color:#fff;">ÖLÇÜLEN YAĞIŞ: <span style="color:var(--neon-green);">${rain} mm</span></div>
+                            <div style="color:#888; font-size:0.85rem;">Eşik değerin üzerinde (>= 10.0mm). Hasar oluşmadı.</div>
                         `;
-                        addLog(`BİLGİ: Yağış normal (${rain}mm). Kontrat beklemede.`, "#fff");
+                        addLog(`BİLGİ: Yağış normal (${rain}mm). Kontrat bekleme modunda.`, "#fff");
                     }
                 } else {
-                    
-                    const delay = Math.floor(Math.random() * 200);
+                    const delay = Math.floor(Math.random() * 210);
                     if(delay > 120) {
-                        
+                        SoundFX.success();
                         resultDiv.innerHTML = `
-                            <div style="color:var(--neon-green); font-size:1.2rem; font-weight:bold;">⚠️ RÖTAR TESPİT EDİLDİ!</div>
-                            <div style="margin:10px 0; font-size:1.5rem;">GECİKME: ${delay} DK</div>
-                            <div style="color:#fff;">AKILLI KONTRAT TETİKLENDİ.</div>
-                            <div style="border:1px solid var(--neon-green); padding:5px; margin-top:5px; color:var(--neon-green)">
-                                🚀 5.000 TL TRANSFER EDİLDİ
+                            <div style="color:var(--neon-green); font-size:1.15rem; font-weight:bold;">⚠️ KRİTİK RÖTAR TESPİT EDİLDİ!</div>
+                            <div style="margin:8px 0; font-size:1.4rem; color:#fff;">UÇUŞ RÖTARI: <span style="color:var(--neon-red);">${delay} DK</span></div>
+                            <div style="color:#aee; font-size:0.85rem;">AKILLI KONTRAT TAZMİNAT PROTOKOLÜ AKTİF.</div>
+                            <div style="border:1px solid var(--neon-green); background: rgba(10,255,0,0.08); padding:8px; margin-top:8px; color:var(--neon-green); font-weight:bold;">
+                                🚀 5.000 TL TAZMİNAT HESABA YANSITILDI
                             </div>
-                            <div style="font-size:0.7rem; color:#666; margin-top:5px;">TX: 0x3b...a12</div>
+                            <div style="font-size:0.7rem; color:#667; margin-top:6px;">TX: 0x3b14...a12e</div>
                         `;
-                        addLog(`KRİTİK: Yüksek rötar (${delay}dk). Ödeme Yapıldı.`, "#ff003c");
+                        addLog(`KRİTİK: Yüksek Rötar (${delay}dk > 120dk). 5.000 TL Tazminat Ödendi.`, "#0aff00");
                     } else {
-                        
+                        SoundFX.alert();
                         resultDiv.innerHTML = `
-                            <div style="color:#888; font-size:1.2rem;">✅ UÇUŞ ZAMANINDA</div>
-                            <div style="margin:10px 0; font-size:1.5rem;">GECİKME: ${delay} DK</div>
-                            <div>Limit aşılmadı. İyi uçuşlar.</div>
+                            <div style="color:#889; font-size:1.15rem; font-weight:bold;">✅ UÇUŞ NORMAL / TOLERANS DAHİLİNDE</div>
+                            <div style="margin:8px 0; font-size:1.4rem; color:#fff;">GECİKME: <span style="color:var(--neon-green);">${delay} DK</span></div>
+                            <div style="color:#888; font-size:0.85rem;">120 dakika eşik sınırı aşılmadı. İyi uçuşlar.</div>
                         `;
-                        addLog(`BİLGİ: Rötar limiti aşılmadı (${delay}dk).`, "#fff");
+                        addLog(`BİLGİ: Rötar tolerans dahilinde (${delay}dk). Kontrat beklemede.`, "#fff");
                     }
                 }
-
-            }, 4500);
+            }, 4200);
         }
 
-        
         window.addEventListener('resize', () => {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
             if(camera && renderer) {
                 const container = document.getElementById('scan-canvas-container');
                 camera.aspect = container.offsetWidth / container.offsetHeight;
@@ -575,10 +630,6 @@
                 renderer.setSize(container.offsetWidth, container.offsetHeight);
             }
         });
-
     </script>
 </body>
-
 </html>
-
-
