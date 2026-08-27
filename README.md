@@ -1,39 +1,50 @@
 # 🛡️ Parametrik Mikro Sigorta Platformu
+### *bGroup // RiskOptima Labs & DATEX Tasarım Ar-Ge Prototipi*
 
-> **Blokzincir tabanlı Parametrik Sigorta (Akıllı Kontrat) süreçlerini simüle eden, Three.js destekli 3D görselleştirmeye sahip yeni nesil InsurTech arayüz projesi.**
+> **Blokzincir tabanlı Parametrik Sigorta (Akıllı Kontrat) süreçlerini simüle eden, Three.js destekli 3D görselleştirmeye sahip yeni nesil InsurTech arayüz prototipi.**
 
 [![Canlı Demo](https://img.shields.io/badge/Canlı%20Demo-Vercel-00f3ff?style=for-the-badge&logo=vercel&logoColor=white)](https://parametrik-mikro-sigorta-platformu.vercel.app/)
+[![Ekosistem](https://img.shields.io/badge/Ekosistem-bGroup-0aff00?style=for-the-badge)](#-ekosistem-mimarisi-bgroup)
 
 ---
 
 ## 🌐 Canlı Önizleme
 
-Projeyi tarayıcınızda anında deneyimlemek için:  
+Projeyi tarayıcınızda canlı olarak deneyimlemek için:  
 👉 **[parametrik-mikro-sigorta-platformu.vercel.app](https://parametrik-mikro-sigorta-platformu.vercel.app/)**
+
+---
+
+## 🏛️ Ekosistem Mimarisi (bGroup)
+
+Bu prototip, **bGroup** girişim ekosisteminin iki temel operasyonel katmanı temel alınarak geliştirilmiştir:
+
+* **RiskOptima Labs (Model Katmanı):** Parametrik risk modellemesi, kritik eşik analizi (Threshold Risk Engine), Oracle veri akış protokolleri ve otonom akıllı kontrat karar mantığı.
+* **DATEX Tasarım (Mutfak Katmanı):** Cyberpunk HUD, CRT monitör hissi, fütüristik kullanıcı deneyimi (UX) ve Three.js tabanlı interaktif 3D veri görselleştirme mimarisi.
 
 ---
 
 ## 🌍 Proje Hakkında
 
-**Parametrik Mikro Sigorta Platformu**, geleneksel sigortacılık süreçlerindeki eksper ataması, hasar ihbar bürokrasisi ve haftalarca süren tazminat ödeme gecikmelerini ortadan kaldıran; **Oracle veri sağlayıcıları** ve **Akıllı Kontrat (Smart Contract)** mantığıyla çalışan fütüristik bir InsurTech simülasyonudur.
+**Parametrik Mikro Sigorta Platformu**, geleneksel sigortacılık operasyonlarındaki eksper ataması, manuel hasar ihbarı ve haftalar süren mutabakat süreçlerini ortadan kaldıran; **Oracle veri sağlayıcıları** ve **Akıllı Kontrat (Smart Contract)** mantığıyla çalışan yeni nesil bir InsurTech simülasyonudur.
 
-Bu platform; gerçek dünya verilerini (hava durumu radarları, küresel uçuş takip sistemleri) anlık olarak dinler ve önceden belirlenmiş eşik değerler (Threshold) aşıldığında **hasar ödemelerini insan müdahalesine gerek kalmaksızın otonom olarak gerçekleştirir.**
+Sistem; gerçek dünya verilerini (meteoroloji radarları, küresel uçuş takip sistemleri) anlık olarak dinler ve önceden tanımlanmış parametreler aşıldığında **hasar ödemelerini insan müdahalesine ihtiyaç duymadan otonom olarak gerçekleştirir.**
 
 ---
 
 ## 🎯 Amaç & Vizyon
 
-Geleneksel sigortacılığı *"Risk gerçekleştikten sonra belge topla"* modelinden çıkarıp; *"Risk gerçekleştiği an ödemeyi yap"* vizyonuna taşıyan parametrik mimariyi, siber-güvenlik estetiği (Cyberpunk HUD) ve etkileşimli 3D küre görselleştirmesi ile somut bir deneyime dönüştürmektir.
+Geleneksel sigortacılığı *"Risk gerçekleştikten sonra belge topla"* anlayışından çıkarıp; *"Risk gerçekleştiği an sıfır sürtünmeyle ödeme yap"* modeline taşıyan parametrik mimariyi, siber-güvenlik estetiği ve etkileşimli 3D küre görselleştirmesi ile somut bir deneyime dönüştürmektir.
 
 ---
 
 ## 🚀 Öne Çıkan Özellikler
 
-* 🌐 **Three.js ile 3D Küresel Görselleştirme:** Dinamik tel-kafes (wireframe) dünya modeli ve partikül ağ animasyonu.
-* 🤖 **Otonom Akıllı Kontrat Motoru:** Eşik değer tetiklendiğinde otomatik çalışan karar mekanizması.
-* 🔊 **Web Audio API Entegrasyonu:** Harici ses dosyası yüklemeden, tarayıcı üzerinden doğrudan sentezlenen interaktif radar ve bildirim sesleri.
+* 🌐 **Three.js ile 3D Küresel Görselleştirme:** Dinamik tel-kafes (wireframe) dünya modeli ve partikül koordinat motoru.
+* 🤖 **Otonom Akıllı Kontrat Motoru:** Belirlenen eşik değer (Threshold) tetiklendiğinde ödemeyi anında onaylayan algoritmik mantık.
+* 🔊 **Web Audio API Entegrasyonu:** Harici ses dosyası yüklemeden, tarayıcı üzerinde gerçek zamanlı sentezlenen radar, tarama ve başarı bildirim tonları.
 * 🖥️ **Cyberpunk HUD & CRT Arayüz:** Scanline tarama filtreleri, neon terminal pencereleri ve canlı Oracle log konsolu.
-* 📱 **Tam Uyumlu Responsive Tasarım:** Masaüstü ve mobilde kusursuz ölçeklenen yapı.
+* 📱 **Responsive Tasarım:** Tüm ekran çözünürlüklerinde akıcı çalışan hafif yapı.
 
 ---
 
@@ -55,10 +66,10 @@ Geleneksel sigortacılığı *"Risk gerçekleştikten sonra belge topla"* modeli
 
 ---
 
-## 👨‍💻 Yapımcı (Author)
+## 👨‍💻 Yapımcı & İletişim
 
 **Batuhan Bayatlı**  
-*InsurTech & FinTech Enthusiast*  
+*bGroup Founder // InsurTech & FinTech Enthusiast*  
 🔗 [LinkedIn Profilim](https://www.linkedin.com/in/batuhanbayatlı/)
 
 > *"Geleceği tahmin etmenin en iyi yolu, onu inşa etmektir."*
